@@ -1,0 +1,104 @@
+# Brownian Bridge Diffusion Model Template(Pixel Space)
+runner: "BBDMRunner"
+training:
+  n_epochs: 200                 # number of training epoch
+  save_interval: 10             # save period 
+  sample_interval: 5            # visualize period
+  validation_interval: 10       # validation period
+  accumulate_grad_batches: 4
+
+testing:
+  clip_denoised: True
+  sample_num: 5                 # number of inference sample
+
+data:
+  dataset_name: 'typhoon'       # options {'MMNIST', 'typhoon'}
+  dataset_type: 'custom_aligned'
+  dataset_config:
+    dataset: 'typhoon'          # options {'MMNIST', 'typhoon'}
+    dataset_path: '/ssd2/enfly/tmpt/pro_train' # Dataset path
+    valset_path: '/ssd2/enfly/tmpt/pro_test'
+    # dataset_path: '/set/your/trainset/path' # Dataset path
+    # valset_path: '/set/your/validset/path'
+    in_frames: 10   
+    out_frames: 10
+    image_size: 128
+    channels: 3
+    to_normal: True
+  train:
+    batch_size: 1
+    shuffle: True
+  val:
+    batch_size: 2
+    shuffle: True
+  test:
+    batch_size: 2
+    # shuffle: False
+
+model:
+  model_name: "DGDM" # part of result path
+  model_type: "BBDM" # specify a module
+  # model_load_path:  # model checkpoint path
+  # optim_sche_load_path:  # optimizer scheduler checkpoint path
+
+  EMA:
+    use_ema: True
+    ema_decay: 0.995
+    update_ema_interval: 8 # step
+    start_ema_step: 30000
+
+  BB:
+    optimizer:
+      optimizer: 'Adam'
+      lr: 1.e-4
+      beta1: 0.9
+      beta2: 0.999
+      weight_decay: 0.000
+
+    lr_scheduler:
+      min_lr: 5.e-6
+      factor: 0.5
+      patience: 3000
+      cooldown: 3000
+      threshold: 0.0001
+
+    params:
+      mt_type: 'frame' # options {'linear', 'sin', frame}
+      objective: 'grad' # options {'grad'}
+      loss_type: 'l2' # options {'l1', 'l2'}
+
+      skip_sample: True
+      sample_type: 'linear' # options {"linear", "cosine"}
+      sample_step: 200
+      truncate_step: 100 # reverse_step = sample_step - truncate_step
+      min_timesteps: 550  # 
+      num_timesteps: 1000 # timesteps
+      eta: 1.0 # DDIM reverse process eta
+      max_var: 1.0 # maximum variance
+
+      UNetParams: # Diffusion model configs
+        dim: 64
+        channels: 3
+        out_dim: 3
+        dim_mults: !!python/tuple
+          - 1
+          - 2
+          - 4
+          - 8
+        attn_heads: 8
+        attn_dim_head: 32
+        init_kernel_size: 7
+        use_sparse_linear_attn: True
+        resnet_groups: 8
+        condition_key: "predictor"
+        
+  CondParams: # iam4vp config
+    train: True
+    pretrained: # pretrained model root
+    lr: 1.e-3
+
+    predictor:
+      hid_S: 64
+      hid_T: 512 
+      N_S: 4      # number of encoder 
+      N_T: 8      # number of translator
