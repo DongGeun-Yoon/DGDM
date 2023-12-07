@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from abc import abstractmethod
+
 import torchvision
 from torch import nn, einsum
 from functools import partial
@@ -443,16 +443,3 @@ class Unet3D(nn.Module):
             return self.final_conv(x), sim_result
         else:
             return self.final_conv(x)
-
-if __name__ == "__main__":
-    model = Unet3D()    
-    params = 0 
-    for p in model.parameters():
-        params += p.numel()
-    print(model)
-    print(params)
-    import torch
-    x = torch.rand(1,10,3,64,64)
-    
-    out = model(x)
-    print(out.shape)

@@ -12,19 +12,19 @@ testing:
   sample_num: 1                 # number of inference sample
 
 data:
-  dataset_name: 'typhoon'       # options {'MMNIST', 'typhoon'}
+  dataset_name: 'MMNIST'       # options {'MMNIST', 'typhoon'}
   dataset_type: 'custom_aligned'
-  channels: ['ir105', 'sw038', 'wv063']
+  channels: ['gray']
   dataset_config:
-    dataset: 'typhoon'          # options {'MMNIST', 'typhoon'}
-    dataset_path: '/ssd2/enfly/tmpt/pro_train' # Dataset path
-    valset_path: '/ssd2/enfly/tmpt/pro_test_clean'
+    dataset: 'MMNIST'          # options {'MMNIST', 'typhoon'}
+    dataset_path: 'data' # Dataset path
+    valset_path: 'data'
     # dataset_path: '/set/your/trainset/path' # Dataset path
     # valset_path: '/set/your/validset/path'
     in_frames: 10   
     out_frames: 10
-    image_size: 128
-    channels: 3
+    image_size: 64
+    channels: 1
     to_normal: True
   train:
     batch_size: 1
@@ -74,13 +74,13 @@ model:
       truncate_step: 100 # reverse_step = sample_step - truncate_step
       min_timesteps: 550  # 
       num_timesteps: 1000 # timesteps
-      eta: 1.0 # DDIM reverse process eta
+      eta: 0.25 # DDIM reverse process eta
       max_var: 1.0 # maximum variance
 
       UNetParams: # Diffusion model configs
         dim: 64
-        channels: 3
-        out_dim: 3
+        channels: 1
+        out_dim: 1
         dim_mults: !!python/tuple
           - 1
           - 2

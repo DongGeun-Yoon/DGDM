@@ -14,7 +14,7 @@ import torch.distributed as dist
 def parse_args_and_config():
     parser = argparse.ArgumentParser(description=globals()['__doc__'])
 
-    parser.add_argument('-c', '--config', type=str, default='configs/Template-typhoon.yaml', help='Path to the config file')
+    parser.add_argument('-c', '--config', type=str, default='configs/Template-MovingMNIST.yaml', help='Path to the config file')
     parser.add_argument('-s', '--seed', type=int, default=777, help='Random seed')
     parser.add_argument('-r', '--result_path', type=str, default='debug', help="The directory to save results")
 

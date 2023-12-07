@@ -141,22 +141,14 @@ class Decoder(nn.Module):
             *[ConvSC(C_hid, C_hid, stride=s, transpose=True) for s in strides[:-1]],
             ConvSC(C_hid, C_hid, stride=strides[-1], transpose=True)
         )
-        self.readout_ir = nn.Conv2d(640, 10, 1)
-        self.readout_wv = nn.Conv2d(640, 10, 1)
-        self.readout_sw = nn.Conv2d(640, 10, 1)
-        # self.readout = nn.ModuleList([nn.Convd2(C_hid*out_frames, out_frames, 1)]*channels)
+        self.readout = nn.Conv2d(C_hid*out_frames, C_out*out_frames, 1)
     
     def forward(self, hid, enc1=None):
         for i in range(0,len(self.dec)-1):
             hid = self.dec[i](hid)
         Y = self.dec[-1](hid+enc1)
         Y = rearrange(Y, '(b t) c h w -> b (t c) h w', t=self.out_frames)
-        
-        ir = self.readout_ir(Y).unsqueeze(2)
-        wv = self.readout_wv(Y).unsqueeze(2)
-        sw = self.readout_sw(Y).unsqueeze(2)
-        Y  = torch.cat([ir,sw,wv], dim=2)
-        # Y = self.readout(Y)
+        Y = self.readout(Y)
         return Y
 
 class Predictor(nn.Module):
@@ -181,9 +173,10 @@ class Predictor(nn.Module):
         return y
 
 class Determinisitic(nn.Module):
-    def __init__(self, shape_in=(10,1), hid_S=64, hid_T=512, N_S=4, N_T=8, out_frames=10):
+    def __init__(self, shape_in=(10,1), hid_S=64, hid_T=640, N_S=4, N_T=8, out_frames=10):
         super(Determinisitic, self).__init__()
         T, C = shape_in
+        self.out_frames = out_frames
         self.enc = Encoder(C, hid_S, N_S)
         self.hid = Predictor(T*hid_S, hid_T, N_T)
         self.dec = Decoder(hid_S, C, N_S, out_frames)
@@ -199,23 +192,5 @@ class Determinisitic(nn.Module):
         feature = rearrange(feature, 'b t c h w -> b c t h w')
         hid = hid.reshape(B*T, C_, H_, W_)
         Y = self.dec(hid, skip) # B T H W
-        return Y, feature # TODO : channel
-
-if __name__ == "__main__":
-    import torch.nn as nn
-    import numpy as np
-    model = IAM4VP()
-    # ckt = torch.load('/home/user/Documents/enfly/tmpt/tmpt/final_see_saw/previous/200_use.pth')
-    # model.load_state_dict(ckt)
-    # print('using load done')
-    
-    ckt = torch.load('/home/user/Documents/enfly/tmpt/tmpt/final_see_saw/previous/500.pth')
-    model = nn.DataParallel(model)
-    model.load_state_dict(ckt)
-    model = model.module.cpu()
-    # print('load done')
-    # torch.save(model.state_dict(), '/home/user/Documents/enfly/tmpt/tmpt/final_see_saw/previous/500_use.pth')
-    
-    inputs = torch.randn(2,10, 1,64,64)
-    b,_ = model(inputs)
-    print(b.shape)
+        Y = rearrange(Y, 'b (t c) h w -> b t c h w', t=self.out_frames)
+        return Y, feature

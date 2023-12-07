@@ -9,6 +9,7 @@ import torch.nn.functional as F
 from Register import Registers
 from PIL import Image
 
+from datasets.mmnist import MovingMNIST
 from datasets.typhoon import TLoader
 
 @Registers.datasets.register_with_name('custom_aligned')
