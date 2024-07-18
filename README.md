@@ -22,8 +22,8 @@ cd ./data/moving_mnist
 bash download_mmnist.sh
 ```
 
-#### PWD-typhoon
-to be continue
+#### PWN-Typhoon
+- Download PWN-Typhoon dataset [Link](https://github.com/xuekt98/BBDM) and set ```data``` dir.
 
 # Usage
 ## Demo
