@@ -23,7 +23,7 @@ bash download_mmnist.sh
 ```
 
 #### PWN-Typhoon
-- Download PWN-Typhoon dataset [Link]([[https://github.com/xuekt98/BBDM](https://drive.google.com/drive/folders/1_bI1t-hWEEZiJx8rCIUKnmWVuH23_z0O)]) and set ```data``` dir.
+- Download PWN-Typhoon dataset [Link](https://drive.google.com/drive/folders/1_bI1t-hWEEZiJx8rCIUKnmWVuH23_z0O) and set ```data``` dir.
 
 # Usage
 ## Demo
