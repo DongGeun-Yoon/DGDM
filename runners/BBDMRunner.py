@@ -16,7 +16,6 @@ from torchsummary import summary
 import torch.nn.functional as F
 import time
 import imageio
-import pdb
 
 @Registers.runners.register_with_name('BBDMRunner')
 class BBDMRunner(BaseRunner):
@@ -99,12 +98,12 @@ class BBDMRunner(BaseRunner):
         sample = net.sample(x_cond, clip_denoised=self.config.testing.clip_denoised)
         sample, prediction = sample[0], sample[1]
         
-        channels = ['ir105', 'sw038', 'wv063']
+        channels = self.config.data.channels
         for z, channel in enumerate(channels):
             x_conds = x_cond[0,:, z:z+1]
             x_split = x[0,:, z:z+1]
             sample_split = sample[:, z:z+1]
-            prediction_split = prediction[:, z:z+1]           
+            prediction_split = prediction[:, z:z+1]
             
             save_single_video(x_conds, sample_path, f'{channel}_input.png', grid_size, to_normal=self.config.data.dataset_config.to_normal)
             save_single_video(x_split, sample_path, f'{channel}_target.png', grid_size, to_normal=self.config.data.dataset_config.to_normal)
@@ -264,19 +263,6 @@ class BBDMRunner(BaseRunner):
                         PSNR2[z].update(psnr_, 1)
                         LPIPS2[z].update(lpips_, 1)
                         
-                        # TODO: per frame
-                        # psnr_per = np.zeros(10)
-                        # for f_idx in range(grid_size):
-                        #     mse = np.mean((preds.cpu().numpy()[f_idx]-trues.cpu().numpy()[f_idx])**2)
-                        #     psnr_per[f_idx] = - 10 * np.log10(mse)
-                        # ssim_per = np.zeros(10)
-                        
-                        # for f_idx in range(grid_size):
-                        #     ssim_per[f_idx] = cal_ssim(preds.cpu().numpy()[f_idx].swapaxes(0, 2), trues.cpu().numpy()[f_idx].swapaxes(0, 2), multichannel=True)
-                        # mse_per = np.sum(np.mean((preds.unsqueeze(0).cpu().numpy() - trues.unsqueeze(0).cpu().numpy())**2, axis=(0)), axis=(1,2,3))
-                        # mae_per = np.sum(np.mean(np.abs(preds.unsqueeze(0).cpu().numpy() - trues.unsqueeze(0).cpu().numpy()), axis=(0)), axis=(1,2,3))
-                        # print(" ".join([str(i) for i in mse_per]), " ".join([str(i) for i in mae_per]), " ".join([str(i) for i in psnr_per]), " ".join([str(i) for i in ssim_per]), file=results)
-                    
             idx += batch_size
             if idx != 1 and (idx) % 1 == 0:
                 for z, channel in enumerate(channels):

@@ -222,33 +222,3 @@ def save_frames(image, save_path, file_name, grid_size=10, to_normal=True):
         im = Image.fromarray(frame)
         save_name = file_name[:-4] + f"_{i}" + file_name[-4:]
         im.save(os.path.join(save_path, save_name))
-
-if __name__ == "__main__":
-    def to_i3d(x):
-        # x = x.reshape(x.shape[0], -1, 1, 224, 224)
-        # if x.size(2) == 1:
-        #     x = x.repeat(1, 1, 3, 1, 1) # hack for greyscale images
-        # x = x.permute(0, 2, 1, 3, 4)  # BTCHW -> BCTHW
-        x = torch.from_numpy(x).cuda()
-        x = x.permute(0, 4, 1, 2, 3)
-        return x
-    
-    y = np.random.RandomState(1).rand(128, 10, 64, 64, 3).astype(np.float32)
-    x = np.random.RandomState(2).rand(256, 10, 64, 64, 3).astype(np.float32)
-
-    i3d = load_i3d_pretrained().cuda().eval()
-    x = to_i3d(x)
-    y = to_i3d(y)
-
-    real_embedding = []
-    fake_embedding = []
-    
-    real_embedding.append(get_feats(x, i3d))
-    fake_embedding.append(get_feats(y, i3d))
-    # for i in range(256):
-    #     real_embedding.append(get_feats(x[i:i+1], i3d))
-    #     fake_embedding.append(get_feats(y[i:i+1], i3d))
-    real_embedding = np.concatenate(real_embedding, axis=0)
-    fake_embedding = np.concatenate(fake_embedding, axis=0)
-    print(compute_fvd(real_embedding, fake_embedding))
-    

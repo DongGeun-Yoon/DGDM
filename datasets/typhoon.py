@@ -24,12 +24,12 @@ class TLoader(Dataset):
 
     def _make_sqe(self, path):
         if self.is_train:
-            images = glob.glob(f"{path}/*/*.png")
+            images = glob.glob(f"{path}/*/*")
             images = [i for i in images if 'ir105' in i]
             images = sorted(images)
             s_index = np.random.randint(len(images)-20)
         else:
-            images = glob.glob(f"{path}/*/*.png")
+            images = glob.glob(f"{path}/*/*")
             images = [i for i in images if 'ir105' in i]
             images = sorted(images)
             s_index = 0 
@@ -38,14 +38,13 @@ class TLoader(Dataset):
     def _preprocessor(self, path, is_input=False):
         imgs = []
         for i in path:
-            ir = np.array(Image.open(i).convert('L'))
-            sw = np.array(Image.open(i.replace('ir105', 'sw038')).convert('L'))
-            wv = np.array(Image.open(i.replace('ir105', 'wv063')).convert('L'))
+            ir = np.array(np.load(i))
+            sw = np.array(np.load(i.replace('ir105', 'sw038')))
+            wv = np.array(np.load(i.replace('ir105', 'wv063')))
             img = np.stack([ir, sw, wv], axis=0)
             imgs.append(img)
         imgs = np.stack(imgs, axis=0)
         imgs = torch.from_numpy(imgs)
-        imgs = imgs / 255.
         return imgs
 
     def __getitem__(self, idx):
@@ -55,10 +54,5 @@ class TLoader(Dataset):
         inputs = self._preprocessor(inputs, True)
         outputs = self._preprocessor(outputs, True)
         
-        inputs = torch.clamp(inputs, 0, 1)
-        outputs = torch.clamp(outputs, 0, 1)
-
-        inputs = inputs * 2 - 1
-        outputs = outputs * 2 - 1
         return inputs, outputs    
     

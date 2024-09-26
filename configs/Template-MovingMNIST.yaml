@@ -1,7 +1,7 @@
 # Brownian Bridge Diffusion Model Template(Pixel Space)
 runner: "BBDMRunner"
 training:
-  n_epochs: 200                 # number of training epoch
+  n_epochs: 2000                # number of training epoch
   save_interval: 10             # save period 
   sample_interval: 5            # visualize period
   validation_interval: 10       # validation period
@@ -19,15 +19,13 @@ data:
     dataset: 'MMNIST'          # options {'MMNIST', 'typhoon'}
     dataset_path: 'data' # Dataset path
     valset_path: 'data'
-    # dataset_path: '/set/your/trainset/path' # Dataset path
-    # valset_path: '/set/your/validset/path'
     in_frames: 10   
     out_frames: 10
     image_size: 64
     channels: 1
     to_normal: True
   train:
-    batch_size: 1
+    batch_size: 8
     shuffle: True
   val:
     batch_size: 2
@@ -64,7 +62,7 @@ model:
       threshold: 0.0001
 
     params:
-      mt_type: 'frame' # options {'linear', 'sin', frame}
+      mt_type: 'frame' # options {'linear', 'sin', 'frame'}
       objective: 'grad' # options {'grad'}
       loss_type: 'l2' # options {'l1', 'l2'}
 

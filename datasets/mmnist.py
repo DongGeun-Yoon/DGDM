@@ -6,8 +6,6 @@ from torch.utils.data import Dataset
 import torch.nn.functional as F
 import torchvision.transforms as transforms
 
-from Register import Registers
-from PIL import Image
 import os
 import gzip
 
@@ -143,4 +141,4 @@ class MovingMNIST(Dataset):
         output = torch.from_numpy((output / 127.5)-1).contiguous().float()
         inputs = torch.from_numpy((inputs / 127.5)-1).contiguous().float()
         # f c h w 
-        return inputs, output 
+        return inputs, output

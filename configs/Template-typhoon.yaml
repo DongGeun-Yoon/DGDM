@@ -17,17 +17,15 @@ data:
   channels: ['ir105', 'sw038', 'wv063']
   dataset_config:
     dataset: 'typhoon'          # options {'MMNIST', 'typhoon'}
-    dataset_path: '/ssd2/enfly/tmpt/pro_train' # Dataset path
-    valset_path: '/ssd2/enfly/tmpt/pro_test_clean'
-    # dataset_path: '/set/your/trainset/path' # Dataset path
-    # valset_path: '/set/your/validset/path'
+    dataset_path: 'data/DATA' # Dataset path
+    valset_path: 'data/DATA'
     in_frames: 10   
     out_frames: 10
     image_size: 128
     channels: 3
     to_normal: True
   train:
-    batch_size: 1
+    batch_size: 8
     shuffle: True
   val:
     batch_size: 2
@@ -64,7 +62,7 @@ model:
       threshold: 0.0001
 
     params:
-      mt_type: 'frame' # options {'linear', 'sin', frame}
+      mt_type: 'frame' # options {'linear', 'sin', 'frame'}
       objective: 'grad' # options {'grad'}
       loss_type: 'l2' # options {'l1', 'l2'}
 
