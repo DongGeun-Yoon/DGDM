@@ -1,4 +1,4 @@
-# DGDM : Deterministic Guidance Diffusion Model for Probabilistic Weather Forecasting
+# DGDM : Probabilistic Weather Forecasting with Deterministic Guidance-based Diffusion Model
 
 Welcome to the official repository for the **[Probabilistic Weather Forecasting with Deterministic Guidance-based Diffusion Model](https://arxiv.org/abs/2312.02819)**. This repository hosts the implementation of DGDM, a novel approach that leverages diffusion model to provide high-accuracy probabilistic
 weather forecasting.
